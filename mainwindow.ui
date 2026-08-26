@@ -6,20 +6,492 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>796</width>
     <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow {
+	
+	
+	background-color: rgb(31, 31, 31);
+}</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="start_button">
+    <property name="geometry">
+     <rect>
+      <x>190</x>
+      <y>340</y>
+      <width>80</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="side_panel" native="true">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>10</y>
+      <width>171</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+	color: rgb(174, 174, 174);
+	background-color: rgb(38, 38, 38);
+
+	text-align: center;
+	
+	height: 30;
+	border: none
+}
+
+QPushButton:checked {
+	color: rgb(255, 255, 255);
+}
+
+QPushButton:hover {
+	background-color: rgb(61, 61, 61);
+}
+
+QWidget {
+	background-color: rgb(38, 38, 38);
+}</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>20</y>
+       <width>101</width>
+       <height>284</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="input_button">
+          <property name="text">
+           <string>Ввод</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="output_button">
+          <property name="text">
+           <string>Вывод</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="working_mode_button">
+          <property name="text">
+           <string>Режим работы</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="proccessing_button">
+          <property name="text">
+           <string>Обработка</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoExclusive">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Orientation::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="stop_button">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pause_button">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="resume_button">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QScrollArea" name="scrollArea">
+    <property name="geometry">
+     <rect>
+      <x>280</x>
+      <y>10</y>
+      <width>451</width>
+      <height>281</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QScrollArea {
+   background: rgb(38, 38, 38);
+	border: none;
+}
+
+QScrollBar:vertical {
+    background: rgb(38, 38, 38);
+    width: 14px;
+    margin: 20px 0 20px 0;
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    height: 0px;
+    background: none;
+}
+</string>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="widgetResizable">
+     <bool>false</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>451</width>
+       <height>351</height>
+      </rect>
+     </property>
+     <widget class="QStackedWidget" name="options_stacked_widget">
+      <property name="geometry">
+       <rect>
+        <x>-20</x>
+        <y>0</y>
+        <width>481</width>
+        <height>361</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QStackedWidget {
+	background-color: rgb(38, 38, 38);
+}
+
+QWidget {
+	color: rgb(174, 174, 174);
+}</string>
+      </property>
+      <property name="currentIndex">
+       <number>2</number>
+      </property>
+      <widget class="QWidget" name="page_1">
+       <widget class="QPushButton" name="choose_input_folder_button">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>80</y>
+          <width>80</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Выбрать</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="apply_masks_button">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>244</y>
+          <width>80</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Применить</string>
+        </property>
+       </widget>
+       <widget class="QPlainTextEdit" name="plainTextEdit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>170</y>
+          <width>281</width>
+          <height>64</height>
+         </rect>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="input_folder_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>411</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QLabel" name="input_folder_label">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>20</y>
+          <width>171</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Папка с входными файлами</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="apply_masks_label">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>140</y>
+          <width>171</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Маски входных файлов</string>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="delete_input_files_radio_button">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>330</y>
+          <width>151</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Удалять входные файлы</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="delete_input_files_label">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>310</y>
+          <width>261</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Настройка работы со входными файлами</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_3">
+       <widget class="QPushButton" name="choose_output_folder_button">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>80</y>
+          <width>80</width>
+          <height>18</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Выбрать</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="output_folder_line_edit">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>50</y>
+          <width>411</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="rewrite_radio_button">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>170</y>
+          <width>251</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Перезаписывать файлы</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+       <widget class="QRadioButton" name="add_number_radio_button">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>200</y>
+          <width>261</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Добавлять номер в конце</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="output_folder_label">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>20</y>
+          <width>171</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Папка с выходными файлами</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="output_folder_label_2">
+        <property name="geometry">
+         <rect>
+          <x>50</x>
+          <y>140</y>
+          <width>221</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Повторение имен выходных файлов</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_4">
+       <widget class="QLabel" name="set_time_label">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>160</y>
+          <width>111</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Установка таймера</string>
+        </property>
+       </widget>
+       <widget class="QTimeEdit" name="timer_time_edit">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>190</y>
+          <width>118</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="displayFormat">
+         <string>hh:mm:ss</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="timer_check_box">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>130</y>
+          <width>311</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Продолжить работу с заданной периодичностью</string>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="page_2"/>
+     </widget>
+    </widget>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>796</width>
      <height>17</height>
     </rect>
    </property>

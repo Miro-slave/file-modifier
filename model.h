@@ -1,0 +1,71 @@
+#ifndef MODEL_H
+#define MODEL_H
+
+#include "filefilter.h"
+#include "filemodifier.h"
+
+#include <QMutex>
+#include <QString>
+#include <QWaitCondition>
+
+class Model : public QObject
+{
+    Q_OBJECT
+public:
+    // corresponds policy towards working mode
+    enum class RunPolicy {
+        SingleRun = 0,
+        WithTimer,
+    };
+
+    // corresponds policy towards output files with identical names
+    enum class DuplicatePolicy {
+        Rewrite = 0,
+        AddNumber,
+    };
+
+    // corresponds policy towards output files with identical names
+    enum class DeletingPolicy {
+        NotDelete = 0,
+        Delete
+    };
+
+    Model();
+    void setInputFolder(const QString& input_directory_path);
+    void setOutputFolder(const QString& output_directory_path);
+    void setFileFilters(const QList<QString>& file_filters);
+    void setDuplicatePolicy(DuplicatePolicy duplicate_policy);
+    void setDeletingPolicy(DeletingPolicy deleting_policy);
+    void setModifier(quint64 modifier);
+    void processSingleFile(const QString& input_file_path, const QString& output_file_path);
+
+public slots:
+    void work();
+    void pause();
+    void resume();
+    void stop();
+
+signals:
+    void finished();
+
+private:
+    QString m_input_directory_path;
+    QString m_output_directory_path;
+
+    QList<QString> m_file_filters;
+
+    RunPolicy m_run_policy;
+
+    // for binary operation
+    quint64 m_modifier;
+    DuplicatePolicy m_duplicate_policy;
+    DeletingPolicy m_deleting_policy;
+
+    QMutex m_mutex;
+    QWaitCondition m_wait_condition;
+
+    bool m_paused;
+    bool m_terminated;
+};
+
+#endif // MODEL_H
