@@ -164,14 +164,14 @@ QWidget {
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pause_button">
+         <widget class="QPushButton" name="resume_button">
           <property name="text">
            <string>PushButton</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="resume_button">
+         <widget class="QPushButton" name="pause_button">
           <property name="text">
            <string>PushButton</string>
           </property>
@@ -465,6 +465,13 @@ QWidget {
         </property>
         <property name="displayFormat">
          <string>hh:mm:ss</string>
+        </property>
+        <property name="time">
+         <time>
+          <hour>0</hour>
+          <minute>1</minute>
+          <second>0</second>
+         </time>
         </property>
        </widget>
        <widget class="QCheckBox" name="timer_check_box">

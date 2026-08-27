@@ -20,7 +20,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 private slots:
     void on_input_button_clicked();
@@ -52,6 +53,10 @@ private slots:
     void on_resume_button_clicked();
 
     void on_stop_button_clicked();
+
+    void on_timer_check_box_checkStateChanged(const Qt::CheckState &arg1);
+
+    void on_timer_time_edit_userTimeChanged(const QTime &time);
 
 private:
     QDir m_dir;

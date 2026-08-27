@@ -10,17 +10,43 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     m_model = new Model();
+    m_model->setTimerDuration(ui->timer_time_edit->time().msecsSinceStartOfDay());
+
     m_working_thread = new QThread();
 
     m_model->moveToThread(m_working_thread);
 
     connect(m_working_thread, &QThread::started, m_model, &Model::work);
     connect(m_model, &Model::finished, m_working_thread, &QThread::quit);
-    connect(this, &MainWindow::closeEvent, m_working_thread, &QThread::quit);
+    // connect(m_working_thread, &QThread::finished, m_working_thread, &QThread::deleteLater);
+}
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+    if (m_working_thread->isRunning()) {
+        m_model->stop();
+        m_working_thread->quit();
+
+        if (!m_working_thread->wait(3000)) {
+            m_working_thread->terminate();
+            m_working_thread->wait(3000);
+        }
+
+        event->accept();
+    }
 }
 
 MainWindow::~MainWindow()
 {
+    if (m_working_thread->isRunning()) {
+        m_model->stop();
+        m_working_thread->quit();
+
+        if (!m_working_thread->wait(3000)) {
+            m_working_thread->terminate();
+            m_working_thread->wait(3000);
+        }
+    }
+
     delete m_model;
     delete m_working_thread;
     delete ui;
@@ -139,5 +165,21 @@ void MainWindow::on_stop_button_clicked()
     if (m_working_thread->isRunning()) {
         m_model->stop();
     }
+}
+
+
+void MainWindow::on_timer_check_box_checkStateChanged(const Qt::CheckState &arg1)
+{
+    if (arg1 == Qt::CheckState::Checked) {
+        m_model->setRunPolicy(Model::RunPolicy::WithTimer);
+    } else {
+        m_model->setRunPolicy(Model::RunPolicy::SingleRun);
+    }
+}
+
+
+void MainWindow::on_timer_time_edit_userTimeChanged(const QTime &time)
+{
+    m_model->setTimerDuration(ui->timer_time_edit->time().msecsSinceStartOfDay());
 }
 

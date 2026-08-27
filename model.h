@@ -6,6 +6,7 @@
 
 #include <QMutex>
 #include <QString>
+#include <QElapsedTimer>
 #include <QWaitCondition>
 
 class Model : public QObject
@@ -34,9 +35,13 @@ public:
     void setInputFolder(const QString& input_directory_path);
     void setOutputFolder(const QString& output_directory_path);
     void setFileFilters(const QList<QString>& file_filters);
+    void setRunPolicy(RunPolicy run_policy);
     void setDuplicatePolicy(DuplicatePolicy duplicate_policy);
     void setDeletingPolicy(DeletingPolicy deleting_policy);
     void setModifier(quint64 modifier);
+    void setTimerDuration(unsigned long timer_duration);
+
+private:
     void processSingleFile(const QString& input_file_path, const QString& output_file_path);
 
 public slots:
@@ -44,6 +49,7 @@ public slots:
     void pause();
     void resume();
     void stop();
+    void processFiles();
 
 signals:
     void finished();
@@ -56,14 +62,21 @@ private:
 
     RunPolicy m_run_policy;
 
+    QElapsedTimer m_elapsed_timer;
+    unsigned long m_timer_duration;
+
+    quint64 m_bytes_until_pause_check;
+
     // for binary operation
     quint64 m_modifier;
+
     DuplicatePolicy m_duplicate_policy;
     DeletingPolicy m_deleting_policy;
 
     QMutex m_mutex;
     QWaitCondition m_wait_condition;
 
+    bool m_running;
     bool m_paused;
     bool m_terminated;
 };
