@@ -9,6 +9,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->file_filters_plain_text_edit->setPlaceholderText(R"(Используйте регулярные выражения или вписывайте суффиксы файлов.
+По умолчанию обрабатываются все файлы.
+Добавляйте маски по одной на строку:
+
+.bin
+testFile.bin
+.*\.bin
+testFile[0-9]*.bin
+testFile[0-9]*\..*
+)");
+
     m_model = new Model();
     m_model->setTimerDuration(ui->timer_time_edit->time().msecsSinceStartOfDay());
 
@@ -17,8 +28,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_model->moveToThread(m_working_thread);
 
     connect(m_working_thread, &QThread::started, m_model, &Model::work);
+    connect(m_model, &Model::finished, this, [this]() {
+        ui->start_button->setEnabled(true);
+        ui->pause_button->setEnabled(false);
+        ui->resume_button->setEnabled(false);
+        ui->stop_button->setEnabled(false);
+    });
     connect(m_model, &Model::finished, m_working_thread, &QThread::quit);
-    // connect(m_working_thread, &QThread::finished, m_working_thread, &QThread::deleteLater);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
@@ -88,7 +104,7 @@ void MainWindow::on_choose_input_folder_button_clicked()
 
 void MainWindow::on_apply_masks_button_clicked()
 {
-    QList<QString> file_filters = ui->plainTextEdit->toPlainText().split('\n');
+    QList<QString> file_filters = ui->file_filters_plain_text_edit->toPlainText().split('\n');
     m_model->setFileFilters(file_filters);
 }
 
@@ -108,6 +124,11 @@ void MainWindow::on_start_button_clicked()
 {
     if (!m_working_thread->isRunning()) {
         m_working_thread->start();
+
+        ui->start_button->setDisabled(true);
+        ui->pause_button->setEnabled(true);
+        ui->resume_button->setEnabled(false);
+        ui->stop_button->setEnabled(true);
     }
 }
 
@@ -149,6 +170,10 @@ void MainWindow::on_pause_button_clicked()
 {
     if (m_working_thread->isRunning()) {
         m_model->pause();
+
+        ui->pause_button->setEnabled(false);
+        ui->resume_button->setEnabled(true);
+        ui->stop_button->setEnabled(true);
     }
 }
 
@@ -156,6 +181,10 @@ void MainWindow::on_resume_button_clicked()
 {
     if (m_working_thread->isRunning()) {
         m_model->resume();
+
+        ui->pause_button->setEnabled(true);
+        ui->resume_button->setEnabled(false);
+        ui->stop_button->setEnabled(true);
     }
 }
 
@@ -164,6 +193,11 @@ void MainWindow::on_stop_button_clicked()
 {
     if (m_working_thread->isRunning()) {
         m_model->stop();
+
+        ui->start_button->setEnabled(true);
+        ui->pause_button->setEnabled(false);
+        ui->resume_button->setEnabled(false);
+        ui->stop_button->setEnabled(false);
     }
 }
 

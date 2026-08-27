@@ -7,6 +7,7 @@
 #include <QMutex>
 #include <QString>
 #include <QElapsedTimer>
+#include <QSet>
 #include <QWaitCondition>
 
 class Model : public QObject
@@ -58,6 +59,9 @@ private:
     QString m_input_directory_path;
     QString m_output_directory_path;
 
+    QSet<QString> m_processed_file_paths;
+
+    FileFilter m_file_filter;
     QList<QString> m_file_filters;
 
     RunPolicy m_run_policy;

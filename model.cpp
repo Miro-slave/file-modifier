@@ -31,7 +31,7 @@ void Model::setOutputFolder(const QString& output_directory_path) {
 }
 
 void Model::setFileFilters(const QList<QString>& file_filters) {
-    m_file_filters = file_filters;
+    m_file_filter.setRegexes(file_filters);
 }
 
 void Model::setRunPolicy(RunPolicy run_policy) {
@@ -55,6 +55,10 @@ void Model::setTimerDuration(unsigned long timer_duration) {
 }
 
 void Model::processSingleFile(const QString& input_file_path, const QString& output_file_path) {
+    if (m_processed_file_paths.contains(input_file_path)) {
+        return;
+    }
+
     QFile input_file(input_file_path);
     QFile output_file(output_file_path);
 
@@ -109,6 +113,8 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
             if (m_terminated) {
                 m_mutex.unlock();
 
+                output_file.remove();
+
                 return;
             }
 
@@ -127,19 +133,22 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
 
     if (m_deleting_policy == DeletingPolicy::Delete) {
         input_file.remove();
+    } else {
+        m_processed_file_paths.insert(input_file_path);
     }
 }
 
 void Model::processFiles() {
     m_running = true;
 
-    QDirIterator it(m_input_directory_path, m_file_filters,  QDir::Files);
+    QDir input_directory_directory(m_input_directory_path);
+    QList<QString> file_names = input_directory_directory.entryList(QDir::Files);
 
-    while (it.hasNext()) {
-        it.next();
+    file_names = m_file_filter.filter(file_names);
 
-        QString input_file_path = m_input_directory_path + "\\" + it.fileName();
-        QString output_file_path =  m_output_directory_path + "\\" + it.fileName();
+    for (const QString& file_name : file_names) {
+        QString input_file_path = m_input_directory_path + "\\" + file_name;
+        QString output_file_path =  m_output_directory_path + "\\" + file_name;
 
         processSingleFile(input_file_path, output_file_path);
 

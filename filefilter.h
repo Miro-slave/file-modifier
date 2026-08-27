@@ -9,7 +9,7 @@ class FileFilter
 public:
     FileFilter() = default;
     void setRegexes(const QList<QString>& regex_lines);
-    QList<QString> filter(const QList<QString> file_names);
+    QList<QString> filter(const QList<QString>& file_names);
 private:
     QList<QRegularExpression> m_regexes;
 };
