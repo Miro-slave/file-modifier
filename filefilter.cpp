@@ -7,9 +7,9 @@ void FileFilter::setRegexes(const QList<QString>& regex_lines) {
 }
 
 QList<QString> FileFilter::filter(const QList<QString>& file_names) {
-    /* if (m_regexes.empty()) {
+    if (m_regexes.empty()) {
         return file_names;
-    }*/
+    }
 
     QList<QString> result;
 

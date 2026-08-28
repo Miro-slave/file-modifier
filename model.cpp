@@ -17,10 +17,7 @@ Model::Model()
         , m_running(false)
         , m_paused(false)
         , m_terminated(false)
-{
-    m_input_directory_path = "C:\\Users\\YF\\Desktop\\Texts\\FileModifier";
-    m_output_directory_path = "C:\\Users\\YF\\Desktop\\Texts\\FileModifier\\output";
-}
+{}
 
 void Model::setInputFolder(const QString& input_directory_path) {
     m_input_directory_path = input_directory_path;
@@ -165,6 +162,8 @@ void Model::work() {
     m_terminated = false;
     m_running = false;
     m_paused = false;
+
+    m_processed_file_paths.clear();
 
     if (m_run_policy == RunPolicy::SingleRun) {
         processFiles();

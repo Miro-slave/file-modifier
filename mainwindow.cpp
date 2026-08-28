@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     ui->file_filters_plain_text_edit->setPlaceholderText(R"(Используйте регулярные выражения или вписывайте суффиксы файлов.
-По умолчанию обрабатываются все файлы.
+По умолчанию обрабатываются все файлы, лежащие в папке ввода.
 Добавляйте маски по одной на строку:
 
 .bin
@@ -122,7 +123,11 @@ void MainWindow::on_choose_output_folder_button_clicked()
 
 void MainWindow::on_start_button_clicked()
 {
-    if (!m_working_thread->isRunning()) {
+    if (ui->input_folder_line_edit->text().isEmpty()) {
+        QMessageBox::critical(this, "Ошибка запуска", "Введите папку с входными файлами.");
+    } else if (ui->output_folder_line_edit->text().isEmpty()) {
+        QMessageBox::critical(this, "Ошибка запуска","Введите папку с выходными файлами.");
+    } else if (!m_working_thread->isRunning()) {
         m_working_thread->start();
 
         ui->start_button->setDisabled(true);
@@ -215,5 +220,16 @@ void MainWindow::on_timer_check_box_checkStateChanged(const Qt::CheckState &arg1
 void MainWindow::on_timer_time_edit_userTimeChanged(const QTime &time)
 {
     m_model->setTimerDuration(ui->timer_time_edit->time().msecsSinceStartOfDay());
+}
+
+
+void MainWindow::on_choose_xor_variable_button_clicked()
+{
+    if (m_working_thread->isRunning()) {
+        QMessageBox::critical(this, "Ошибка записи", "Дождитесь завершения выполнения.");
+    } else {
+        quint64 modifier = ui->xor_variable_line_edit->text().toULongLong(nullptr, 16);
+        m_model->setModifier(modifier);
+    }
 }
 

@@ -58,6 +58,8 @@ private slots:
 
     void on_timer_time_edit_userTimeChanged(const QTime &time);
 
+    void on_choose_xor_variable_button_clicked();
+
 private:
     QDir m_dir;
     Ui::MainWindow *ui;
