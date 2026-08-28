@@ -24,11 +24,15 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         model.h model.cpp
-        filefilter.h filefilter.cpp
-        filemodifier.h filemodifier.cpp
+
+
 
         resource.qrc
         Images/icon.jpg
+        filefilter.h
+        filefilter.h
+
+        filefilter.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET FileModifier APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

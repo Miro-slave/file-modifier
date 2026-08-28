@@ -13,6 +13,7 @@ Model::Model()
         , m_duplicate_policy(DuplicatePolicy::AddNumber)
         , m_deleting_policy(DeletingPolicy::NotDelete)
         , m_modifier(-1)
+        , m_processed_bytes(0)
         , m_bytes_until_pause_check(1'000'000)
         , m_running(false)
         , m_paused(false)
@@ -49,6 +50,27 @@ void Model::setModifier(quint64 modifier) {
 
 void Model::setTimerDuration(unsigned long timer_duration) {
     m_timer_duration = timer_duration;
+}
+
+void Model::setBytesUntilPauseCheck(quint64 bytes_until_pause_check) {
+    m_bytes_until_pause_check = bytes_until_pause_check;
+}
+
+quint64 Model::totalBytesToProcess() {
+    QDir input_directory_directory(m_input_directory_path);
+    QList<QString> file_names = input_directory_directory.entryList(QDir::Files);
+
+    file_names = m_file_filter.filter(file_names);
+
+    quint64 total_bytes = 0;
+
+    for (const QString& file_name : file_names) {
+        QString input_file_path = m_input_directory_path + "\\" + file_name;
+        QFileInfo file_info(input_file_path);
+        total_bytes += file_info.size();
+    }
+
+    return total_bytes;
 }
 
 void Model::processSingleFile(const QString& input_file_path, const QString& output_file_path) {
@@ -98,24 +120,30 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
 
             output_file.write(reinterpret_cast<const char*>(&chunk), 8);
 
-            QString str;
+            m_processed_bytes += 8;
 
             // pause/termination check
-            m_mutex.lock();
+            if (i > pause_check_counter * m_bytes_until_pause_check) {
+                pause_check_counter++;
 
-            while (m_paused) {
-                m_wait_condition.wait(&m_mutex);
-            }
+                emit chunkProcessed();
 
-            if (m_terminated) {
+                m_mutex.lock();
+
+                while (m_paused) {
+                    m_wait_condition.wait(&m_mutex);
+                }
+
+                if (m_terminated) {
+                    m_mutex.unlock();
+
+                    output_file.remove();
+
+                    return;
+                }
+
                 m_mutex.unlock();
-
-                output_file.remove();
-
-                return;
             }
-
-            m_mutex.unlock();
         }
 
         // transform remaining bytes
@@ -126,6 +154,8 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
         chunk ^= m_modifier;
 
         output_file.write(reinterpret_cast<const char*>(&chunk), remaining_bytes_count);
+
+        m_processed_bytes += remaining_bytes_count;
     }
 
     if (m_deleting_policy == DeletingPolicy::Delete) {
@@ -136,6 +166,7 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
 }
 
 void Model::processFiles() {
+    m_processed_bytes = 0;
     m_running = true;
 
     QDir input_directory_directory(m_input_directory_path);
@@ -192,6 +223,10 @@ void Model::work() {
     m_terminated = false;
 
     emit finished();
+}
+
+quint64 Model::processedBytes() {
+    return m_processed_bytes;
 }
 
 void Model::pause() {

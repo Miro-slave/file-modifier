@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QTHread>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -10,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // init UI components
     ui->file_filters_plain_text_edit->setPlaceholderText(R"(Используйте регулярные выражения или вписывайте суффиксы файлов.
 По умолчанию обрабатываются все файлы, лежащие в папке ввода.
 Добавляйте маски по одной на строку:
@@ -21,6 +23,9 @@ testFile[0-9]*.bin
 testFile[0-9]*\..*
 )");
 
+    ui->progressBar->hide();
+
+    // init model and working thread
     m_model = new Model();
     m_model->setTimerDuration(ui->timer_time_edit->time().msecsSinceStartOfDay());
 
@@ -29,11 +34,16 @@ testFile[0-9]*\..*
     m_model->moveToThread(m_working_thread);
 
     connect(m_working_thread, &QThread::started, m_model, &Model::work);
+    connect(m_model, &Model::chunkProcessed, this, [this]() {
+        ui->progressBar->setValue(m_model->processedBytes());
+    });
     connect(m_model, &Model::finished, this, [this]() {
         ui->start_button->setEnabled(true);
         ui->pause_button->setEnabled(false);
         ui->resume_button->setEnabled(false);
         ui->stop_button->setEnabled(false);
+
+        ui->progressBar->hide();
     });
     connect(m_model, &Model::finished, m_working_thread, &QThread::quit);
 }
@@ -127,13 +137,18 @@ void MainWindow::on_start_button_clicked()
         QMessageBox::critical(this, "Ошибка запуска", "Введите папку с входными файлами.");
     } else if (ui->output_folder_line_edit->text().isEmpty()) {
         QMessageBox::critical(this, "Ошибка запуска","Введите папку с выходными файлами.");
-    } else if (!m_working_thread->isRunning()) {
+    } else if (!m_working_thread->isRunning()) {        
+        quint64 total_bytes = m_model->totalBytesToProcess();
+        ui->progressBar->setRange(0, total_bytes);
+
         m_working_thread->start();
 
         ui->start_button->setDisabled(true);
         ui->pause_button->setEnabled(true);
         ui->resume_button->setEnabled(false);
         ui->stop_button->setEnabled(true);
+
+        ui->progressBar->show();
     }
 }
 
@@ -203,6 +218,8 @@ void MainWindow::on_stop_button_clicked()
         ui->pause_button->setEnabled(false);
         ui->resume_button->setEnabled(false);
         ui->stop_button->setEnabled(false);
+
+        ui->progressBar->hide();
     }
 }
 
@@ -232,4 +249,3 @@ void MainWindow::on_choose_xor_variable_button_clicked()
         m_model->setModifier(modifier);
     }
 }
-

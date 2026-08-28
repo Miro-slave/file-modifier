@@ -2,7 +2,6 @@
 #define MODEL_H
 
 #include "filefilter.h"
-#include "filemodifier.h"
 
 #include <QMutex>
 #include <QString>
@@ -41,6 +40,8 @@ public:
     void setDeletingPolicy(DeletingPolicy deleting_policy);
     void setModifier(quint64 modifier);
     void setTimerDuration(unsigned long timer_duration);
+    void setBytesUntilPauseCheck(quint64 bytes_until_pause_check);
+    quint64 totalBytesToProcess();
 
 private:
     void processSingleFile(const QString& input_file_path, const QString& output_file_path);
@@ -51,8 +52,10 @@ public slots:
     void resume();
     void stop();
     void processFiles();
+    quint64 processedBytes();
 
 signals:
+    void chunkProcessed();
     void finished();
 
 private:
@@ -69,6 +72,7 @@ private:
     QElapsedTimer m_elapsed_timer;
     unsigned long m_timer_duration;
 
+    quint64 m_processed_bytes;
     quint64 m_bytes_until_pause_check;
 
     // for binary operation
