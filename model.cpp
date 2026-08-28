@@ -126,7 +126,7 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
             if (i > pause_check_counter * m_bytes_until_pause_check) {
                 pause_check_counter++;
 
-                emit chunkProcessed();
+                emit progressUpdate();
 
                 m_mutex.lock();
 
@@ -166,7 +166,6 @@ void Model::processSingleFile(const QString& input_file_path, const QString& out
 }
 
 void Model::processFiles() {
-    m_processed_bytes = 0;
     m_running = true;
 
     QDir input_directory_directory(m_input_directory_path);
@@ -196,6 +195,8 @@ void Model::work() {
 
     m_processed_file_paths.clear();
 
+    m_processed_bytes = 0;
+
     if (m_run_policy == RunPolicy::SingleRun) {
         processFiles();
     } else if (m_run_policy == RunPolicy::WithTimer) {
@@ -208,6 +209,10 @@ void Model::work() {
 
             if (remaining_time > 0 && !m_terminated) {
                 while (remaining_time) {
+                    m_processed_bytes = 0;
+
+                    emit progressUpdate();
+
                     unsigned long time_to_wait = qMin(remaining_time, 1000ul);
                     QThread::msleep(time_to_wait);
                     remaining_time -= time_to_wait;

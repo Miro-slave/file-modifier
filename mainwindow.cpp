@@ -38,7 +38,7 @@ testFile[0-9]*\..*
     m_model->moveToThread(m_working_thread);
 
     connect(m_working_thread, &QThread::started, m_model, &Model::work);
-    connect(m_model, &Model::chunkProcessed, this, [this]() {
+    connect(m_model, &Model::progressUpdate, this, [this]() {
         ui->progressBar->setValue(m_model->processedBytes());
     });
     connect(m_model, &Model::finished, this, [this]() {

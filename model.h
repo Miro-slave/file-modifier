@@ -55,7 +55,7 @@ public slots:
     quint64 processedBytes();
 
 signals:
-    void chunkProcessed();
+    void progressUpdate();
     void finished();
 
 private:
