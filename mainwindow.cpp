@@ -23,6 +23,10 @@ testFile[0-9]*.bin
 testFile[0-9]*\..*
 )");
 
+    QSizePolicy size_policy = ui->progressBar->sizePolicy();
+    size_policy.setRetainSizeWhenHidden(true);
+    ui->progressBar->setSizePolicy(size_policy);
+
     ui->progressBar->hide();
 
     // init model and working thread
